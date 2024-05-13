@@ -126,7 +126,7 @@ __all__ = [
     'YuleSimon', 'Zeta', 'DiscreteRV', 'DiscreteDistributionHandmade',
 
     'JointRV', 'Dirichlet', 'GeneralizedMultivariateLogGamma',
-    'GeneralizedMultivariateLogGammaOmega', 'Multinomial', 'MultivariateBeta',
+    'GeneralizedMultivariateLogGammaOmega', 'Multinomial', 'Multinomial2', 'MultivariateBeta',
     'MultivariateEwens', 'MultivariateT', 'NegativeMultinomial',
     'NormalGamma', 'MultivariateNormal', 'MultivariateLaplace', 'marginal_distribution',
 
@@ -177,7 +177,7 @@ from .drv_types import (FlorySchulz, Geometric, Hermite, Logarithmic, NegativeBi
 
 from .joint_rv_types import (JointRV, Dirichlet,
         GeneralizedMultivariateLogGamma, GeneralizedMultivariateLogGammaOmega,
-        Multinomial, MultivariateBeta, MultivariateEwens, MultivariateT,
+        Multinomial, Multinomial2, MultivariateBeta, MultivariateEwens, MultivariateT,
         NegativeMultinomial, NormalGamma, MultivariateNormal, MultivariateLaplace,
         marginal_distribution)
 

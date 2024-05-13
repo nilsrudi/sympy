@@ -32,6 +32,7 @@ __all__ = ['JointRV',
 'GeneralizedMultivariateLogGamma',
 'GeneralizedMultivariateLogGammaOmega',
 'Multinomial',
+'Multinomial2',
 'MultivariateBeta',
 'MultivariateEwens',
 'MultivariateT',
@@ -868,6 +869,81 @@ def Multinomial(syms, n, *p):
     if not isinstance(p[0], list):
         p = (list(p), )
     return multivariate_rv(MultinomialDistribution, syms, n, p[0])
+
+#FOR TESTING    
+#-------------------------------------------------------------------------------
+# Multinomial distribution -----------------------------------------------------
+
+class MultinomialDistribution2(JointDistribution):
+
+    _argnames = ('n', 'p')
+    is_Continuous=False
+    is_Discrete = True
+
+    @staticmethod
+    def check(n, p):
+        _value_check(n > 0,
+                        "number of trials must be a positive integer")
+        for p_k in p:
+            _value_check((p_k >= 0, p_k <= 1),
+                        "probability must be in range [0, 1]")
+        _value_check(Eq(sum(p), 1),
+                        "probabilities must sum to 1")
+
+    @property
+    def set(self):
+        return Intersection(S.Naturals0, Interval(0, self.n))**len(self.p)
+
+    def pdf(self, *x):
+        n, p = self.n, self.p
+        term_1 = factorial(n)/Mul.fromiter(factorial(x_k) for x_k in x)
+        term_2 = Mul.fromiter(p_k**x_k for p_k, x_k in zip(p, x))
+        return Piecewise((term_1 * term_2, Eq(sum(x), n)), (0, True))
+
+def Multinomial2(syms, n, *p):
+    """
+    Creates a discrete random variable with Multinomial Distribution.
+
+    The density of the said distribution can be found at [1].
+
+    Parameters
+    ==========
+
+    n : Positive integer
+        Represents number of trials
+    p : List of event probabilities
+        Must be in the range of $[0, 1]$.
+
+    Returns
+    =======
+
+    RandomSymbol
+
+    Examples
+    ========
+
+    >>> from sympy.stats import density, Multinomial, marginal_distribution
+    >>> from sympy import symbols
+    >>> x1, x2, x3 = symbols('x1, x2, x3', nonnegative=True, integer=True)
+    >>> p1, p2, p3 = symbols('p1, p2, p3', positive=True)
+    >>> M = Multinomial('M', 3, p1, p2, p3)
+    >>> density(M)(x1, x2, x3)
+    Piecewise((6*p1**x1*p2**x2*p3**x3/(factorial(x1)*factorial(x2)*factorial(x3)),
+    Eq(x1 + x2 + x3, 3)), (0, True))
+    >>> marginal_distribution(M, M[0])(x1).subs(x1, 1)
+    3*p1*p2**2 + 6*p1*p2*p3 + 3*p1*p3**2
+
+    References
+    ==========
+
+    .. [1] https://en.wikipedia.org/wiki/Multinomial_distribution
+    .. [2] https://mathworld.wolfram.com/MultinomialDistribution.html
+
+    """
+    if not isinstance(p[0], list):
+        p = (list(p), )
+    return multivariate_rv(MultinomialDistribution, syms, n, p[0])
+
 
 #-------------------------------------------------------------------------------
 # Negative Multinomial Distribution --------------------------------------------
